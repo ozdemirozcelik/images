@@ -18,3 +18,30 @@ services:
       - '5050:5050'
     volumes:
       - ./api:/app
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: strong-pass
+    volumes:
+    # map volume to default path inside the container, not local computer
+      - mongodb_data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: strong-pass
+      ME_CONFIG_MONGODB_SERVER: mongo 
+      # ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    depends_on:
+      - mongo
+
+# create custom volume inside docker for persistent data
+volumes:
+  mongodb_data:
